@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mission To Unlock My Heart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#fdfcf7,#f7ecd0,#e7d3a3);
+    min-height:100vh;
+    overflow:hidden;
+    color:#2d2d2d;
+}
+
+/* Falling Hearts Background */
+
+#falling-hearts{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:1;
+}
+
+.bg-heart{
+    position:absolute;
+    top:-50px;
+    font-size:20px;
+    animation:fall linear infinite;
+    opacity:.25;
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-50px);
+    }
+    to{
+        transform:translateY(110vh);
+    }
+}
+
+.screen{
+    position:relative;
+    z-index:2;
+    width:100%;
+    min-height:100vh;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:25px;
+}
+
+.active{
+    display:flex;
+}
+
+.fade{
+    animation:fadeIn .8s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+h1{
+    margin-bottom:15px;
+    font-weight:700;
+}
+
+p{
+    max-width:700px;
+    line-height:1.8;
+}
+
+button{
+    margin-top:18px;
+    padding:13px 28px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    font-size:15px;
+    background:#c9a55b;
+    color:white;
+    font-weight:600;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.option{
+    margin:8px;
+}
+
+.card{
+    background:rgba(255,255,255,.85);
+    backdrop-filter:blur(10px);
+    padding:40px;
+    border-radius:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    max-width:750px;
+}
+
+/* Heart Game */
+
+#heartArea{
+    width:100%;
+    height:60vh;
+    position:relative;
+}
+
+.heart{
+    position:absolute;
+    font-size:40px;
+    cursor:pointer;
+    animation:fallHeart linear forwards;
+}
+
+@keyframes fallHeart{
+    from{
+        transform:translateY(-100px);
+    }
+    to{
+        transform:translateY(80vh);
+    }
+}
+
+/* Popup */
+
+.popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.popup-box{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    min-width:280px;
+    text-align:center;
+}
+
+.popup-box h2{
+    margin-bottom:15px;
+}
+
+/* Letter */
+
+.letter{
+    max-width:900px;
+    background:white;
+    color:#333;
+    padding:40px;
+    border-radius:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    text-align:left;
+    max-height:90vh;
+    overflow-y:auto;
+}
+
+.letter h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.letter p{
+    line-height:2;
+}
+
+.couple-photo{
+    text-align:center;
+    margin-top:35px;
+}
+
+.couple-photo img{
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:50%;
+    border:6px solid #d4af37;
+}
+
+.signature{
+    text-align:center;
+    margin-top:15px;
+    font-size:18px;
+    font-weight:600;
+}
+
+.lock{
+    font-size:90px;
+    margin:15px 0;
+}
+
+#score{
+    margin-top:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="falling-hearts"></div>
+
+<!-- START -->
+
+<div class="screen active fade" id="start">
+    <div class="card">
+        <h1>Mission To Unlock My Heart</h1>
+
+        <p>
+            Hello beautiful,
+            <br><br>
+            I made a surprise for you,
+            <br>
+             but you have to finish the mission first.
+        </p>
+
+        <button onclick="next('level1')">
+            Start Mission
+        </button>
+    </div>
+</div>
+
+<!-- LEVEL 1 -->
+
+<div class="screen fade" id="level1">
+    <div class="card">
+        <h1>Level 1</h1>
+
+        <p>What do I call you?</p>
+
+        <button class="option" onclick="correctLevel1()">Love</button>
+        <button class="option" onclick="correctLevel1()">Babe</button>
+        <button class="option" onclick="correctLevel1()">Mi</button>
+    </div>
+</div>
+
+<!-- LEVEL 2 -->
+
+<div class="screen fade" id="level2">
+
+    <div class="card">
+        <h1>Level 2</h1>
+
+        <p>Catch 5 hearts to continue.</p>
+
+        <h2 id="score">0 / 5</h2>
+
+        <div id="heartArea"></div>
+    </div>
+
+</div>
+
+<!-- LEVEL 3 -->
+
+<div class="screen fade" id="level3">
+
+    <div class="card">
+        <h1>Level 3</h1>
+
+        <p>Who is my favorite person?</p>
+
+        <button class="option" onclick="wrong()">Celebrity</button>
+        <button class="option" onclick="wrong()">Friend</button>
+        <button class="option" onclick="correctLevel3()">You</button>
+
+    </div>
+
+</div>
+
+<!-- LEVEL 4 -->
+
+<div class="screen fade" id="level4">
+
+    <div class="card">
+        <h1>Final Level</h1>
+
+        <div class="lock">🔒</div>
+
+        <p>
+            You've completed every mission.
+        </p>
+
+        <button onclick="unlockHeart()">
+            Unlock My Heart
+        </button>
+
+    </div>
+
+</div>
+
+<!-- LETTER -->
+
+<div class="screen fade" id="letter">
+
+    <div class="letter">
+
+        <h2>To My Mi, Yesha</h2>
+
+        <p>
+
+            Hi Mi,
+            <br><br>
+
+            Bago mo basahin 'to, gusto ko munang sabihin na sobrang proud ako sa'yo.
+            <br><br>
+
+            Alam kong hindi naging madali ang mga nakaraang panahon para sa'yo. Simula nung mawala si Mama mo, alam kong may mga araw na sobrang bigat ng nararamdaman mo. May mga pagkakataon na gusto mo na lang mapag-isa at sarilinin lahat ng sakit. Kahit hindi ko lubos na maintindihan lahat ng pinagdadaanan mo, gusto kong malaman mo na nandito lang ako at handa akong makinig sa'yo.
+            <br><br>
+
+            Hindi mo kailangang maging matatag palagi. Okay lang mapagod. Okay lang umiyak. Okay lang magkaroon ng mga araw na hindi ka okay. Hindi mo kailangang dalhin lahat nang mag-isa.
+            <br><br>
+
+            <strong>Mi, sana huwag kang susuko.</strong>
+            <br><br>
+
+            Marami ka pang pangarap na maaabot, marami pang magagandang bagay na naghihintay para sa'yo. Alam kong hindi mawawala yung lungkot at hindi rin mapapalitan yung pagmamahal ng Mama mo, pero naniniwala ako na darating din yung panahon na magiging mas magaan ang lahat.
+            <br><br>
+
+            Kapag pakiramdam mo mag-isa ka, tandaan mo na may isang taong handang makinig sa'yo, samahan ka, at suportahan ka sa abot ng makakaya niya.
+            <br><br>
+
+            <strong>Ako 'yon.</strong>
+            <br><br>
+
+            Hindi man ako perpekto at hindi ko man kayang ayusin lahat ng problema mo, gusto kong malaman mo na hindi kita hahayaang harapin ang mga laban mo nang mag-isa. Sasamahan kita sa mga araw na masaya ka, at lalo na sa mga araw na pakiramdam mo sobrang bigat ng lahat.
+            <br><br>
+
+            Thank you for staying strong kahit sobrang hirap minsan.
+            <br><br>
+
+            At thank you din dahil hinayaan mo akong maging parte ng buhay mo.
+            <br><br>
+
+            <strong>I believe in you, Mi. more than you know.</strong>
+            <br><br>
+
+            Andito lang ako.
+            <br><br>
+
+            <strong>Palagi.</strong>
+
+        </p>
+
+        <div class="couple-photo">
+            <img src="kami.jpg" alt="Our Photo">
+        </div>
+
+        <div class="signature">
+            ILOVEYOUUSOMUCH BABY😘
+        </div>
+
+    </div>
+
+</div>
+
+<!-- POPUP -->
+
+<div id="popup" class="popup">
+    <div class="popup-box">
+        <h2 id="popupTitle">Correct!</h2>
+        <button onclick="closePopup()">
+            Continue
+        </button>
+    </div>
+</div>
+
+<script>
+
+function next(id){
+    document.querySelectorAll('.screen').forEach(screen=>{
+        screen.classList.remove('active');
+    });
+
+    document.getElementById(id).classList.add('active');
+}
+
+let nextScreen = "";
+
+function showPopup(message,target){
+
+    document.getElementById('popupTitle').innerText = message;
+
+    document.getElementById('popup').style.display='flex';
+
+    nextScreen = target;
+}
+
+function closePopup(){
+
+    document.getElementById('popup').style.display='none';
+
+    next(nextScreen);
+
+    if(nextScreen === "level2"){
+        createHearts();
+    }
+}
+
+function correctLevel1(){
+    showPopup("Correct!", "level2");
+}
+
+let score = 0;
+
+function createHearts(){
+
+    const area = document.getElementById("heartArea");
+
+    area.innerHTML = "";
+
+    for(let i=0;i<15;i++){
+
+        const heart = document.createElement("div");
+
+        heart.className = "heart";
+
+        heart.innerHTML = "❤";
+
+        heart.style.left = Math.random()*90 + "%";
+
+        heart.style.animationDuration =
+        (Math.random()*3+3) + "s";
+
+        heart.onclick = function(){
+
+            this.remove();
+
+            score++;
+
+            document.getElementById("score").innerText =
+            score + " / 5";
+
+            if(score >= 5){
+
+                setTimeout(()=>{
+                    next("level3");
+                },600);
+            }
+        }
+
+        area.appendChild(heart);
+    }
+}
+
+function wrong(){
+    showPopup("Try Again", "level3");
+}
+
+function correctLevel3(){
+    showPopup("Correct. It has always been you.", "level4");
+}
+
+function unlockHeart(){
+    next("letter");
+}
+
+/* Background Falling Hearts */
+
+const bg = document.getElementById("falling-hearts");
+
+for(let i=0;i<25;i++){
+
+    const heart = document.createElement("div");
+
+    heart.className = "bg-heart";
+
+    heart.innerHTML = "❤";
+
+    heart.style.left = Math.random()*100 + "%";
+
+    heart.style.animationDuration =
+    (Math.random()*8+8) + "s";
+
+    heart.style.animationDelay =
+    (Math.random()*5) + "s";
+
+    bg.appendChild(heart);
+}
+
+</script>
+
+</body>
+</html>
